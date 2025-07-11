@@ -1,0 +1,24 @@
+name: ddev-drupal-contrib-root
+
+project_files:
+  - docker-compose.selenium-standalone-chromium.yaml
+  - config.selenium-standalone-chromium.yaml
+  - commands/host/drupal-get-module
+  - commands/host/drupal-init
+
+ddev_version_constraint: '>= v1.24.3'
+
+post_install_actions:
+  - |
+    #ddev-nodisplay
+    #ddev-description:Adding all hostnames to the selenium-standalone-chromium container to make them available
+    cat <<-END >docker-compose.selenium-standalone-chromium_extras.yaml
+    #ddev-generated
+    services:
+      selenium-standalone-chromium:
+        external_links:
+        {{- $standalone_chromium_hostnames := splitList "," (env "DDEV_HOSTNAME") -}}
+        {{- range $i, $n := $standalone_chromium_hostnames }}
+          - "ddev-router:{{- replace (env "DDEV_TLD") "\\${DDEV_TLD}" (replace (env "DDEV_PROJECT") "\\${DDEV_PROJECT}" $n) -}}"
+        {{- end }}
+    END

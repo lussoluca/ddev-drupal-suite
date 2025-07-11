@@ -1,0 +1,90 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Clone a Drupal module with composer.
+## Usage: drupal-get-module <module_name> [version]
+## Example: drupal-get-module ai 1.2.x
+## ExecRaw: true
+
+set -e
+
+# Check if jq is available (required for JSON processing)
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required but not installed. Please install jq first."
+    echo "On macOS: brew install jq"
+    echo "On Ubuntu/Debian: apt-get install jq"
+    exit 1
+fi
+
+# Validate arguments
+if [ $# -eq 0 ]; then
+    echo "Error: Module name is required."
+    echo "Usage: get-module <module_name> [version]"
+    echo "Example: get-module ai 1.2.x"
+    exit 1
+fi
+
+MODULE_NAME="$1"
+VERSION="$2"
+
+# Validate module name (Drupal machine name format)
+if [[ ! "$MODULE_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
+    echo "Error: Invalid module name '$MODULE_NAME'."
+    echo "Module name must:"
+    echo "  - Start with a lowercase letter"
+    echo "  - Contain only lowercase letters, numbers, and underscores"
+    echo "  - Not start with a number or underscore"
+    exit 1
+fi
+
+# Validate version if provided (Drupal semantic versioning)
+if [ -n "$VERSION" ]; then
+    # Drupal version patterns:
+    # - 1.x-dev, 2.x-dev (development branches)
+    # - 1.0.0, 1.0.0-alpha1, 1.0.0-beta1, 1.0.0-rc1 (releases)
+    # - 1.0.x, 2.1.x (maintenance branches)
+    if [[ ! "$VERSION" =~ ^([0-9]+\.[0-9x]+(\.[0-9x]+)?(-[a-z]+[0-9]*)?(-dev)?)$ ]]; then
+        echo "Error: Invalid version format '$VERSION'."
+        echo "Valid Drupal version formats:"
+        echo "  - 1.0.0 (stable release)"
+        echo "  - 1.0.x (maintenance branch)"
+        echo "  - 1.x-dev (development branch)"
+        echo "  - 1.0.0-alpha1, 1.0.0-beta1, 1.0.0-rc1 (pre-releases)"
+        exit 1
+    fi
+else
+    # Default to development branch if no version specified
+    VERSION="1.x-dev"
+    echo "No version specified, defaulting to $VERSION"
+fi
+
+rm -rf web/modules/contrib/$MODULE_NAME
+
+# Clone the module from Drupal.org.
+git clone \
+  git@git.drupal.org:project/$MODULE_NAME.git \
+  web/modules/contrib/$MODULE_NAME
+cd web/modules/contrib/$MODULE_NAME
+git checkout $VERSION
+
+# Install module's dependencies.
+cd $DDEV_COMPOSER_ROOT
+composer config repositories.$MODULE_NAME path web/modules/contrib/$MODULE_NAME
+
+composer require \
+  --no-install \
+  --update-with-all-dependencies \
+  --no-interaction \
+  drupal/$MODULE_NAME
+
+# Extract and merge require-dev dependencies from module's composer.json
+REQUIRE_DEV_DEPS=$(php .ddev/commands/web/merge-require-dev.php web/modules/contrib/$MODULE_NAME)
+
+# Install require-dev dependencies if any were found
+if [ -n "$REQUIRE_DEV_DEPS" ]; then
+    echo "Installing require-dev dependencies: $REQUIRE_DEV_DEPS"
+    composer require --dev --no-interaction $REQUIRE_DEV_DEPS
+else
+    echo "No require-dev dependencies found in module's composer.json"
+fi
+

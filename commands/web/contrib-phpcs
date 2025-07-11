@@ -1,0 +1,43 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Check for standards compliance with PHPCS.
+## Usage: contrib-phpcs <module_name> [fix]
+## Example: contrib-phpcs ai
+## ExecRaw: true
+
+set -e 
+
+# Validate arguments
+if [ $# -eq 0 ]; then
+    echo "Error: Module name is required."
+    echo "Usage: contrib-phpcs <module_name>"
+    echo "Example: contrib-phpcs ai"
+    exit 1
+fi
+
+MODULE_NAME="$1"
+FIX="$2"
+
+# Validate module name (Drupal machine name format)
+if [[ ! "$MODULE_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
+    echo "Error: Invalid module name '$MODULE_NAME'."
+    echo "Module name must:"
+    echo "  - Start with a lowercase letter"
+    echo "  - Contain only lowercase letters, numbers, and underscores"
+    echo "  - Not start with a number or underscore"
+    exit 1
+fi
+
+cd "$DDEV_COMPOSER_ROOT/$DDEV_DOCROOT" || exit 1
+
+COMMAND="phpcs"
+if [[ $FIX == "fix" ]]; then
+  COMMAND="phpcbf"
+fi
+
+"../vendor/bin/$COMMAND" \
+  -s \
+  --standard=modules/contrib/$MODULE_NAME/phpcs.xml \
+  --basepath=modules/contrib/$MODULE_NAME \
+  modules/contrib/$MODULE_NAME
