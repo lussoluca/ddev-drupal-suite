@@ -3,8 +3,10 @@ name: ddev-drupal-contrib-root
 project_files:
   - docker-compose.selenium-standalone-chromium.yaml
   - config.selenium-standalone-chromium.yaml
-  - commands/host/drupal-get-module
+  - commands/web/drupal-get-module
   - commands/host/drupal-init
+  - commands/host/contrib-phpcs
+  - commands/host/contrib-phpstan
 
 ddev_version_constraint: '>= v1.24.3'
 
