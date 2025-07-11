@@ -7,6 +7,7 @@ project_files:
   - commands/web/drupal-get-module
   - commands/web/contrib-phpcs
   - commands/web/contrib-phpstan
+  - commands/web/merge-require-dev.php
 
 ddev_version_constraint: '>= v1.24.3'
 
