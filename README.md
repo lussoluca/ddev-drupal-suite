@@ -1,5 +1,5 @@
 [![add-on registry](https://img.shields.io/badge/DDEV-Add--on_Registry-blue)](https://addons.ddev.com)
-[![last commit](https://img.shields.io/github/last-commit/lussoluca/ddev-drupal-suitet)](https://github.com/lussoluca/ddev-drupal-suite/commits)
+[![last commit](https://img.shields.io/github/last-commit/lussoluca/ddev-drupal-suite)](https://github.com/lussoluca/ddev-drupal-suite/commits)
 [![release](https://img.shields.io/github/v/release/lussoluca/ddev-drupal-suite)](https://github.com/lussoluca/ddev-drupal-suite/releases/latest)
 
 # DDEV Drupal Suite 
