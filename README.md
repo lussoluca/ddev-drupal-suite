@@ -49,10 +49,10 @@ ddev composer require drupal/ai_provider_openai:^1.1
 
 ### Download Drupal recipes
 
-You can also download Drupal recipes to your DDEV environment. For example, to download the `drupal/ai-dev-recipe` recipe, you can run:
+You can also download Drupal recipes to your DDEV environment. For example, to download the `drupal/ai_dev_recipe` recipe, you can run:
 
 ```bash
-ddev drupal-get-recipe ai-dev-recipe
+ddev drupal-get-recipe ai_dev_recipe
 ```
 
 This will download the recipe and install it in your DDEV environment, making it available for use.
