@@ -1,0 +1,41 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Analyze code to find bugs with PHPStan.
+## Example: ddev phpunit ai
+## ExecRaw: true
+
+set -e
+
+# Validate arguments
+if [ $# -eq 0 ]; then
+    echo "Error: Module name is required."
+    echo "Usage: phpunit <module_name>"
+    echo "Example: phpunit ai"
+    exit 1
+fi
+
+MODULE_NAME="$1"
+
+# Validate module name (Drupal machine name format)
+if [[ ! "$MODULE_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
+    echo "Error: Invalid module name '$MODULE_NAME'."
+    echo "Module name must:"
+    echo "  - Start with a lowercase letter"
+    echo "  - Contain only lowercase letters, numbers, and underscores"
+    echo "  - Not start with a number or underscore"
+    exit 1
+fi
+
+cd "$DDEV_COMPOSER_ROOT" || exit 1
+if [ -f "web/modules/contrib/$MODULE_NAME/phpunit.xml.dist" ]; then
+    cp -f web/modules/contrib/$MODULE_NAME/phpunit.xml.dist phpunit.$MODULE_NAME.xml
+    trap 'rm -f phpunit.$MODULE_NAME.xml' EXIT
+
+    vendor/bin/phpunit \
+      --configuration phpunit.$MODULE_NAME.xml \
+      web/modules/contrib/$MODULE_NAME
+else
+    # Bootstrap Drupal tests and run all custom module tests.
+    vendor/bin/phpunit --bootstrap $PWD/$DDEV_DOCROOT/core/tests/bootstrap.php $DDEV_DOCROOT/modules/contrib/$MODULE_NAME
+fi

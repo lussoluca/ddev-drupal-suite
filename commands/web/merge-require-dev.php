@@ -1,4 +1,5 @@
 <?php
+// #ddev-generated
 
 $moduleDir = $argv[1];
 $moduleComposerJson = "$moduleDir/composer.json";

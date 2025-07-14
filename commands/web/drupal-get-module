@@ -8,14 +8,6 @@
 
 set -e
 
-# Check if jq is available (required for JSON processing)
-if ! command -v jq &> /dev/null; then
-    echo "Error: jq is required but not installed. Please install jq first."
-    echo "On macOS: brew install jq"
-    echo "On Ubuntu/Debian: apt-get install jq"
-    exit 1
-fi
-
 # Validate arguments
 if [ $# -eq 0 ]; then
     echo "Error: Module name is required."

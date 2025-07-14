@@ -1,0 +1,58 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Donwnload and apply a Drupal recipe.
+## Usage: drupal-get-recipe <recipe_name> [version]
+## Example: drupal-get-recipe drupal_cms_ai 1.2.0
+## ExecRaw: true
+
+set -e
+
+# Validate arguments
+if [ $# -eq 0 ]; then
+    echo "Error: Recipe name is required."
+    echo "Usage: drupal-get-recipe <recipe_name> [version]"
+    echo "Example: drupal-get-recipe drupal_cms_ai 1.2.0"
+    exit 1
+fi
+
+RECIPE_NAME="$1"
+VERSION="$2"
+
+# Validate recipe name (Drupal machine name format)
+if [[ ! "$RECIPE_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
+    echo "Error: Invalid recipe name '$RECIPE_NAME'."
+    echo "Recipe name must:"
+    echo "  - Start with a lowercase letter"
+    echo "  - Contain only lowercase letters, numbers, and underscores"
+    echo "  - Not start with a number or underscore"
+    exit 1
+fi
+
+# Validate version if provided (Drupal semantic versioning)
+if [ -n "$VERSION" ]; then
+    # Drupal version patterns:
+    # - 1.x-dev, 2.x-dev (development branches)
+    # - 1.0.0, 1.0.0-alpha1, 1.0.0-beta1, 1.0.0-rc1 (releases)
+    # - 1.0.x, 2.1.x (maintenance branches)
+    if [[ ! "$VERSION" =~ ^([0-9]+\.[0-9x]+(\.[0-9x]+)?(-[a-z]+[0-9]*)?(-dev)?)$ ]]; then
+        echo "Error: Invalid version format '$VERSION'."
+        echo "Valid Drupal version formats:"
+        echo "  - 1.0.0 (stable release)"
+        echo "  - 1.0.x (maintenance branch)"
+        echo "  - 1.x-dev (development branch)"
+        echo "  - 1.0.0-alpha1, 1.0.0-beta1, 1.0.0-rc1 (pre-releases)"
+        exit 1
+    fi
+else
+    # Default to development branch if no version specified
+    VERSION="1.x-dev"
+    echo "No version specified, defaulting to $VERSION"
+fi
+
+composer require \
+  --no-interaction \
+  drupal/$RECIPE_NAME:$VERSION
+
+cd $DDEV_DOCROOT
+drush recipe ../recipes/$RECIPE_NAME

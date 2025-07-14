@@ -2,15 +2,16 @@
 
 ## #ddev-generated
 ## Description: Analyze code to find bugs with PHPStan.
-## Example: ddev contrib-phpstan ai
+## Example: ddev phpstan ai
+## ExecRaw: true
 
-set -e 
+set -e
 
 # Validate arguments
 if [ $# -eq 0 ]; then
     echo "Error: Module name is required."
-    echo "Usage: contrib-phpstan <module_name>"
-    echo "Example: contrib-phpstan ai"
+    echo "Usage: phpstan <module_name>"
+    echo "Example: phpstan ai"
     exit 1
 fi
 

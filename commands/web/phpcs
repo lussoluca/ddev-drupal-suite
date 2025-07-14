@@ -2,17 +2,17 @@
 
 ## #ddev-generated
 ## Description: Check for standards compliance with PHPCS.
-## Usage: contrib-phpcs <module_name> [fix]
-## Example: contrib-phpcs ai
+## Usage: phpcs <module_name> [fix]
+## Example: phpcs ai
 ## ExecRaw: true
 
-set -e 
+set -e
 
 # Validate arguments
 if [ $# -eq 0 ]; then
     echo "Error: Module name is required."
-    echo "Usage: contrib-phpcs <module_name>"
-    echo "Example: contrib-phpcs ai"
+    echo "Usage: phpcs <module_name>"
+    echo "Example: phpcs ai"
     exit 1
 fi
 
