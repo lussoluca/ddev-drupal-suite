@@ -29,15 +29,21 @@ if [[ ! "$MODULE_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
     exit 1
 fi
 
-cd "$DDEV_COMPOSER_ROOT/$DDEV_DOCROOT" || exit 1
+cd "$DDEV_COMPOSER_ROOT" || exit 1
 
 COMMAND="phpcs"
 if [[ $FIX == "fix" ]]; then
   COMMAND="phpcbf"
 fi
 
-"../vendor/bin/$COMMAND" \
-  -s \
-  --standard=modules/contrib/$MODULE_NAME/phpcs.xml \
-  --basepath=modules/contrib/$MODULE_NAME \
-  modules/contrib/$MODULE_NAME
+if [ -f "web/modules/contrib/$MODULE_NAME/phpcs.xml" ]; then
+  "vendor/bin/$COMMAND" \
+    -s \
+    --standard=web/modules/contrib/$MODULE_NAME/phpcs.xml \
+    --basepath=web/modules/contrib/$MODULE_NAME \
+    --report-full --report-summary --report-source \
+    web/modules/contrib/$MODULE_NAME
+else
+    curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/assets/phpcs.xml.dist
+    phpcs -s --report-full --report-summary --report-source web/modules/contrib/$MODULE_NAME
+fi
