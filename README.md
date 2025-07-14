@@ -4,15 +4,15 @@
 
 # DDEV Drupal Suite 
 
-This add-on can be used to set up a DDEV environment for developing Drupal contrib modules and themes.
-You can use it to spin up any version of Drupal core and clone into it any contrib module or theme.
+This add-on can be used to set up a DDEV environment for developing Drupal contrib modules.
+You can use it to spin up any version of Drupal core and clone into it any contrib module.
 
 # Features
 
 - Spin up any version of Drupal core into a DDEV environment.
-- Clone any combination of contrib modules and themes.
+- Clone any combination of contrib modules.
 - Download and install Drupal recipes.
-- Download any other Drupal contrib module or theme.
+- Download any other Drupal contrib module.
 - Run PHPStan, PHPUnit, and PHPCS on your contrib modules.
 - No need to add DDEV specific artifacts to your contrib modules.
 
