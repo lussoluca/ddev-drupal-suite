@@ -1,4 +1,4 @@
-name: ddev-drupal-contrib-root
+name: ddev-drupal-suite
 
 project_files:
   - docker-compose.selenium-standalone-chromium.yaml
