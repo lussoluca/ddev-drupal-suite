@@ -18,7 +18,7 @@ fi
 
 # Validate semver format (supports standard semver and Drupal's x-dev format)
 VERSION="$1"
-if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(\+[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(@[a-zA-Z0-9]+)?$ ]] && 
+if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(\+[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(@[a-zA-Z0-9]+)?$ ]] &&
    [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.x-[a-zA-Z0-9]+(@[a-zA-Z0-9]+)?$ ]]; then
     echo "Error: Invalid version format '$VERSION'"
     echo "Version must follow semver standard (e.g., 1.0.0, 1.0.0-alpha, 1.0.0+build)"
@@ -36,6 +36,7 @@ ddev composer config minimum-stability dev
 ddev composer require \
     --update-with-all-dependencies \
     --no-interaction \
+    --dev \
     drush/drush \
     drupal/core-dev:$VERSION
 

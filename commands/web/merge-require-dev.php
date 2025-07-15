@@ -11,7 +11,7 @@ if (file_exists($moduleComposerJson)) {
 
     if (isset($composerData['require-dev']) && is_array($composerData['require-dev'])) {
         foreach ($composerData['require-dev'] as $package => $version) {
-            $requireDevDependencies[$package] = $version;
+            $requireDevDependencies[$package] = \str_replace(' ', '', $version);
         }
     }
 }
