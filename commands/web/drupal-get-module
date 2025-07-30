@@ -8,6 +8,68 @@
 
 set -e
 
+# Function to detect development branches
+detect_dev_branch() {
+    local module_name="$1"
+    git ls-remote --heads git@git.drupal.org:project/$module_name.git | \
+        grep -E 'refs/heads/.*-dev$' | \
+        sed 's/.*refs\/heads\///' | \
+        sort -V | \
+        tail -n1
+}
+
+# Function to detect maintenance branches
+detect_maintenance_branch() {
+    local module_name="$1"
+    git ls-remote --heads git@git.drupal.org:project/$module_name.git | \
+        grep -E 'refs/heads/[0-9]+\.[0-9]+\.x$' | \
+        sed 's/.*refs\/heads\///' | \
+        sort -V | \
+        tail -n1
+}
+
+# Function to auto-detect version with clear logic flow
+auto_detect_version() {
+    local module_name="$1"
+    local default_branch="$2"
+
+    # Strategy 1: Use default branch if it's a dev branch
+    if [[ "$default_branch" =~ -dev$ ]]; then
+        echo "Detected development branch: $default_branch" >&2
+        echo "$default_branch"
+        return 0
+    fi
+
+    echo "Default branch '$default_branch' is not a dev branch, searching for dev branches..." >&2
+
+    # Strategy 2: Look for any dev branches
+    local dev_branch=$(detect_dev_branch "$module_name")
+    if [ -n "$dev_branch" ]; then
+        echo "Found development branch: $dev_branch" >&2
+        echo "$dev_branch"
+        return 0
+    fi
+
+    # Strategy 3: Use default branch if it's a maintenance branch
+    if [[ "$default_branch" =~ ^[0-9]+\.[0-9]+\.x$ ]]; then
+        echo "Using maintenance branch as development branch: $default_branch" >&2
+        echo "$default_branch"
+        return 0
+    fi
+
+    # Strategy 4: Look for any maintenance branches
+    local maintenance_branch=$(detect_maintenance_branch "$module_name")
+    if [ -n "$maintenance_branch" ]; then
+        echo "Found maintenance branch: $maintenance_branch" >&2
+        echo "$maintenance_branch"
+        return 0
+    fi
+
+    # Fallback
+    echo "Warning: No development or maintenance branches found, falling back to 1.x-dev" >&2
+    echo "1.x-dev"
+}
+
 # Validate arguments
 if [ $# -eq 0 ]; then
     echo "Error: Module name is required."
@@ -45,9 +107,20 @@ if [ -n "$VERSION" ]; then
         exit 1
     fi
 else
-    # Default to development branch if no version specified
-    VERSION="1.x-dev"
-    echo "No version specified, defaulting to $VERSION"
+    # Auto-detect the default development branch from the Git repository
+    echo "No version specified, detecting default development branch..."
+
+    # Get the default branch name from the remote repository
+    DEFAULT_BRANCH=$(git ls-remote --symref git@git.drupal.org:project/$MODULE_NAME.git HEAD | head -n1 | sed 's/^ref: refs\/heads\///' | sed 's/\tHEAD$//')
+
+    if [ -z "$DEFAULT_BRANCH" ]; then
+        echo "Warning: Could not detect default branch, falling back to 1.x-dev"
+        VERSION="1.x-dev"
+    else
+        VERSION=$(auto_detect_version "$MODULE_NAME" "$DEFAULT_BRANCH")
+    fi
+
+    echo "Using version: $VERSION"
 fi
 
 rm -rf web/modules/contrib/$MODULE_NAME
@@ -69,6 +142,26 @@ composer require \
   --no-interaction \
   drupal/$MODULE_NAME
 
+# Removes require-dev dependencies if any were found
+REMOVE_DEV_DEPS=$(php .ddev/commands/web/merge-remove-dev.php web/modules/contrib/$MODULE_NAME)
+if [ -n "$REMOVE_DEV_DEPS" ]; then
+    echo "Removing require-dev dependencies: $REMOVE_DEV_DEPS"
+
+    # Try to remove each dependency individually and continue on failure.
+    # This is to avoid breaking the installation if one of the dependencies cannot be removed, for example, if it is
+    # required by another package.
+    # An example problem is that drupal/search_api is listed as a require-dev dependency in the AI module, but your
+    # project also has drupal/ai_search installed, which requires drupal/search_api as a production dependency. When
+    # the script tries to remove drupal/search_api, it fails because it's still needed.
+    for dep in $REMOVE_DEV_DEPS; do
+        echo "Attempting to remove: $dep"
+        if ! composer remove --dev --no-interaction "$dep" 2>/dev/null; then
+            echo "Warning: Could not remove $dep (may be required by another package)"
+            composer why "$dep" || true
+        fi
+    done
+fi
+
 # Extract and merge require-dev dependencies from module's composer.json
 REQUIRE_DEV_DEPS=$(php .ddev/commands/web/merge-require-dev.php web/modules/contrib/$MODULE_NAME)
 
@@ -79,4 +172,3 @@ if [ -n "$REQUIRE_DEV_DEPS" ]; then
 else
     echo "No require-dev dependencies found in module's composer.json"
 fi
-
