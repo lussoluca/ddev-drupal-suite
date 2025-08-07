@@ -3,10 +3,12 @@
 [![last commit](https://img.shields.io/github/last-commit/lussoluca/ddev-drupal-suite)](https://github.com/lussoluca/ddev-drupal-suite/commits)
 [![release](https://img.shields.io/github/v/release/lussoluca/ddev-drupal-suite)](https://github.com/lussoluca/ddev-drupal-suite/releases/latest)
 
-# DDEV Drupal Suite
+# DDEV Drupal Suite add-on
 
-This add-on can be used to set up a DDEV environment for developing Drupal contrib modules.
-You can use it to spin up any version of Drupal core and clone into it any contrib module.
+This DDEV add-on streamlines the setup of development environments for working on Drupal contributed modules. It’s specifically designed 
+to make it easy to contribute to two or more contrib modules simultaneously—especially useful when one module depends on another. 
+With just a few commands, you can spin up any version of Drupal core, clone multiple contrib modules into the environment, 
+and start developing or testing changes across them in parallel.
 
 # Features
 
