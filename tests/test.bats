@@ -52,18 +52,18 @@ selenium_health_checks() {
   assert_output --partial "selenium"
 
   # Check if selenium hub is responding on port 4444
-  run ddev exec curl -f http://selenium-standalone-chromium:4444/status
+  run ddev exec curl -f https://${PROJNAME}.ddev.site:4444/status
   assert_success
 
   # Check if VNC viewer is accessible on port 7900
-  run ddev exec curl -f http://selenium-standalone-chromium:7900
+  run ddev exec curl -f https://${PROJNAME}.ddev.site:7900
   assert_success
 
   # Test selenium webdriver functionality
   run ddev exec -s selenium-standalone-chromium curl -X POST \
     -H "Content-Type: application/json" \
     -d '{"capabilities": {"alwaysMatch": {"browserName": "chrome"}}}' \
-    http://localhost:4444/session
+    https://${PROJNAME}.ddev.site/session
   assert_success
   assert_output --partial "sessionId"
 

@@ -1,8 +1,9 @@
 [![add-on registry](https://img.shields.io/badge/DDEV-Add--on_Registry-blue)](https://addons.ddev.com)
+[![tests](https://github.com/lussoluca/ddev-drupal-suite/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/lussoluca/ddev-drupal-suite/actions/workflows/tests.yml?query=branch%3Amain)
 [![last commit](https://img.shields.io/github/last-commit/lussoluca/ddev-drupal-suite)](https://github.com/lussoluca/ddev-drupal-suite/commits)
 [![release](https://img.shields.io/github/v/release/lussoluca/ddev-drupal-suite)](https://github.com/lussoluca/ddev-drupal-suite/releases/latest)
 
-# DDEV Drupal Suite 
+# DDEV Drupal Suite
 
 This add-on can be used to set up a DDEV environment for developing Drupal contrib modules.
 You can use it to spin up any version of Drupal core and clone into it any contrib module.
