@@ -1,0 +1,5 @@
+.DS_Store
+
+# Ignore the IDE files
+/.idea
+/.vscode
