@@ -16,10 +16,6 @@ services:
     # uncomment the following two lines.
     #ports:
     #  - "5900:5900"
-    networks:
-      - ddev_default
-    external_links:
-      - ddev-router:${DDEV_SITENAME}.${DDEV_TLD}
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
