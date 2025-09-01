@@ -143,7 +143,7 @@ composer require \
   drupal/$MODULE_NAME
 
 # Removes require-dev dependencies if any were found
-REMOVE_DEV_DEPS=$(php .ddev/commands/web/merge-remove-dev.php web/modules/contrib/$MODULE_NAME)
+REMOVE_DEV_DEPS=$(php .ddev/scripts/merge-remove-dev.php web/modules/contrib/$MODULE_NAME)
 if [ -n "$REMOVE_DEV_DEPS" ]; then
     echo "Removing require-dev dependencies: $REMOVE_DEV_DEPS"
 
@@ -163,7 +163,7 @@ if [ -n "$REMOVE_DEV_DEPS" ]; then
 fi
 
 # Extract and merge require-dev dependencies from module's composer.json
-REQUIRE_DEV_DEPS=$(php .ddev/commands/web/merge-require-dev.php web/modules/contrib/$MODULE_NAME)
+REQUIRE_DEV_DEPS=$(php .ddev/scripts/merge-require-dev.php web/modules/contrib/$MODULE_NAME)
 
 # Install require-dev dependencies if any were found
 if [ -n "$REQUIRE_DEV_DEPS" ]; then
