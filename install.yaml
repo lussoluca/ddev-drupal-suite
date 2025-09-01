@@ -9,9 +9,9 @@ project_files:
   - commands/web/phpcs
   - commands/web/phpstan
   - commands/web/phpunit
-  - commands/web/composer-utils.php
-  - commands/web/merge-remove-dev.php
-  - commands/web/merge-require-dev.php
+  - scripts/composer-utils.php
+  - scripts/merge-remove-dev.php
+  - scripts/merge-require-dev.php
 
 ddev_version_constraint: '>= v1.24.3'
 
