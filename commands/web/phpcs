@@ -36,14 +36,21 @@ if [[ $FIX == "fix" ]]; then
   COMMAND="phpcbf"
 fi
 
-if [ -f "web/modules/contrib/$MODULE_NAME/phpcs.xml" ]; then
-  "vendor/bin/$COMMAND" \
+if ! command -v $COMMAND >/dev/null; then
+  echo "$COMMAND is not available. You may need to 'ddev composer install'"
+  exit 1
+fi
+
+if [ -f "$DDEV_DOCROOT/modules/contrib/$MODULE_NAME/phpcs.xml.dist" ]; then
+  echo "Using custom PHPCS ruleset for module '$MODULE_NAME'."
+  $COMMAND \
     -s \
-    --standard=web/modules/contrib/$MODULE_NAME/phpcs.xml \
-    --basepath=web/modules/contrib/$MODULE_NAME \
+    --standard=$DDEV_DOCROOT/modules/contrib/$MODULE_NAME/phpcs.xml.dist \
+    --basepath=$DDEV_DOCROOT/modules/contrib/$MODULE_NAME \
     --report-full --report-summary --report-source \
-    web/modules/contrib/$MODULE_NAME
+    $DDEV_DOCROOT/modules/contrib/$MODULE_NAME
 else
-    curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/assets/phpcs.xml.dist
-    phpcs -s --report-full --report-summary --report-source web/modules/contrib/$MODULE_NAME
+  echo "Using default PHPCS ruleset."
+  curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/assets/phpcs.xml.dist
+  $COMMAND -s --report-full --report-summary --report-source $DDEV_DOCROOT/modules/contrib/$MODULE_NAME
 fi
