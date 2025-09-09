@@ -28,6 +28,7 @@ mkdir ai-dev && cd ai-dev
 ddev config --project-type=drupal11 --docroot=web --php-version=8.3 --corepack-enable
 ddev add-on get lussoluca/ddev-drupal-suite
 ddev drupal-init 11.2.2
+ddev auth ssh
 ddev drupal-get-module ai 1.2.x
 ```
 
