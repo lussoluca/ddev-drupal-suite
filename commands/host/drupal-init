@@ -2,8 +2,8 @@
 
 ## #ddev-generated
 ## Description: Init the project
-## Usage: drupal-init <version>
-## Example: drupal-init 11.2.x-dev@dev
+## Usage: drupal-init <version> [profile]
+## Example: drupal-init 11.2.x-dev@dev demo_umami
 ## ExecRaw: true
 
 set -e
@@ -11,13 +11,16 @@ set -e
 # Validate version argument
 if [ -z "$1" ]; then
     echo "Error: Version argument is required"
-    echo "Usage: drupal-init <version>"
-    echo "Example: drupal-init 11.2.x-dev@dev"
+    echo "Usage: drupal-init <version> [profile]"
+    echo "Example: drupal-init 11.2.x-dev@dev demo_umami"
     exit 1
 fi
 
-# Validate semver format (supports standard semver and Drupal's x-dev format)
+# Set version and profile variables
 VERSION="$1"
+PROFILE="${2:-standard}"  # Default to 'standard' if no profile specified
+
+# Validate semver format (supports standard semver and Drupal's x-dev format)
 if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(\+[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(@[a-zA-Z0-9]+)?$ ]] &&
    [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.x-[a-zA-Z0-9]+(@[a-zA-Z0-9]+)?$ ]]; then
     echo "Error: Invalid version format '$VERSION'"
@@ -25,6 +28,8 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)
     echo "Or Drupal's x-dev format (e.g., 11.2.x-dev@dev)"
     exit 1
 fi
+
+echo "Installing Drupal $VERSION with profile: $PROFILE"
 
 # Require Drupal core.
 ddev composer create-project drupal/recommended-project:$VERSION --no-install
@@ -47,7 +52,7 @@ ddev composer config \
   true
 
 # Install Drupal core.
-ddev drush site:install -y \
+ddev drush site:install -y $PROFILE \
   --account-name=admin \
   --account-pass=admin \
   --site-name="Drupal local dev"
