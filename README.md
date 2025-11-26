@@ -5,9 +5,9 @@
 
 # DDEV Drupal Suite add-on
 
-This DDEV add-on streamlines the setup of development environments for working on Drupal contributed modules. It’s specifically designed 
-to make it easy to contribute to two or more contrib modules simultaneously—especially useful when one module depends on another. 
-With just a few commands, you can spin up any version of Drupal core, clone multiple contrib modules into the environment, 
+This DDEV add-on streamlines the setup of development environments for working on Drupal contributed modules. It’s specifically designed
+to make it easy to contribute to two or more contrib modules simultaneously—especially useful when one module depends on another.
+With just a few commands, you can spin up any version of Drupal core, clone multiple contrib modules into the environment,
 and start developing or testing changes across them in parallel.
 
 # Features
@@ -27,7 +27,8 @@ Let's say you need to work on the `ai` module for Drupal 11.2.2, you can run the
 mkdir ai-dev && cd ai-dev
 ddev config --project-type=drupal11 --docroot=web --php-version=8.3 --corepack-enable
 ddev add-on get lussoluca/ddev-drupal-suite
-ddev drupal-init 11.2.2
+ddev start
+ddev drupal-init 11.2.8
 ddev auth ssh
 ddev drupal-get-module ai 1.2.x
 ```
