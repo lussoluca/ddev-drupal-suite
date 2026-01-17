@@ -3,7 +3,7 @@
 ## #ddev-generated
 ## Description: Check for standards compliance with PHPCS.
 ## Usage: phpcs <module_name> [fix]
-## Example: phpcs ai
+## Example: ddev phpcs ai
 ## ExecRaw: true
 
 set -e

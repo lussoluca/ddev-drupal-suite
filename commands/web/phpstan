@@ -5,7 +5,7 @@
 ## Example: ddev phpstan ai
 ## ExecRaw: true
 
-set -e
+set -eu -o pipefail
 
 # Validate arguments
 if [ $# -eq 0 ]; then
@@ -27,10 +27,17 @@ if [[ ! "$MODULE_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
     exit 1
 fi
 
-cd "$DDEV_COMPOSER_ROOT/$DDEV_DOCROOT" || exit 1
+MODULE_PATH="$DDEV_DOCROOT/modules/contrib/$MODULE_NAME"
 
-../vendor/bin/phpstan \
+# Navigate to module directory
+cd "$MODULE_PATH" || exit 1
+
+# Add an empty baseline file to ensure it exists.
+test -e phpstan-baseline.neon || touch phpstan-baseline.neon
+
+# Run PHPStan analysis
+"$DDEV_COMPOSER_ROOT/vendor/bin/phpstan" \
   analyze \
-  --configuration=modules/contrib/$MODULE_NAME/phpstan.neon \
+  --configuration=phpstan.neon \
   --memory-limit=256M \
-  modules/contrib/$MODULE_NAME
+  .
